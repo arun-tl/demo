@@ -50,4 +50,13 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/fastapi:${{ github.sha }}
 
+    - name: Notify Deployment Success to Teams
+      if: success()
+      run: |
+        DEPLOYMENT_NAME="tl-users-microservices-dev-v2"
+        STATUS_MESSAGE=" Deployment succeeded for **$DEPLOYMENT_NAME**."
+
+          curl -H 'Content-Type: application/json' \
+               -d "{\"text\": \"$STATUS_MESSAGE\"}" \
+               "${{ secrets.TEAMS_WEBHOOK_URL }}"
     
