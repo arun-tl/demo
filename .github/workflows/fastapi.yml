@@ -54,9 +54,11 @@ jobs:
       if: success()
       run: |
         DEPLOYMENT_NAME="fastapi-demo"
+        
         STATUS_MESSAGE=" Deployment succeeded for **$DEPLOYMENT_NAME**."
 
           curl -H 'Content-Type: application/json' \
                -d "{\"text\": \"$STATUS_MESSAGE\"}" \
                "${{ secrets.TEAMS_WEBHOOK_URL }}"
+              
     
