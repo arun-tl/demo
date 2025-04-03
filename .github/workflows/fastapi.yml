@@ -53,7 +53,7 @@ jobs:
     - name: Notify Deployment Success to Teams
       if: success()
       run: |
-        DEPLOYMENT_NAME="tl-users-microservices-dev-v2"
+        DEPLOYMENT_NAME="fastapi-demo"
         STATUS_MESSAGE=" Deployment succeeded for **$DEPLOYMENT_NAME**."
 
           curl -H 'Content-Type: application/json' \
