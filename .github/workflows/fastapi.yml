@@ -50,6 +50,7 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/fastapi:${{ github.sha }}
 
+
     - name: Notify Deployment Success to Teams
       if: success()
       run: |
