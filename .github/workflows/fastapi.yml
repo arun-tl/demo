@@ -50,14 +50,16 @@ jobs:
         tags: ${{ secrets.DOCKER_USERNAME }}/fastapi:${{ github.sha }}
 
 
-    - name: Notify Deployment Success to Teams
-      if: success()
+    - name: Send notification to Teams
       run: |
-        DEPLOYMENT_NAME="fastapi-demo"
-        STATUS_MESSAGE=" Deployment succeeded for **$DEPLOYMENT_NAME**."
+        curl -H 'Content-Type: application/json' \
+         -d '{
+               "repository": { "full_name": "${{ github.repository }}" },
+               "ref": "${{ github.ref }}",
+               "head_commit": { "message": "${{ github.event.head_commit.message }}" },
+               "pusher": { "name": "${{ github.actor }}" }
+             }' \
+         ${{ secrets.TEAMS_WEBHOOK_URL }}
 
-          curl -H 'Content-Type: application/json' \
-               -d "{\"text\": \"$STATUS_MESSAGE\"}" \
-               "${{ secrets.TEAMS_WEBHOOK_URL }}"
               
     
