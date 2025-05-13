@@ -8,60 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: checking files
-        run: ls -la
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+      - name: install npm
+        uses: actions/setup-node@v3
         with:
-          python-version: 3.8
+          node-version: '18'
+          
 
-      - name: Install dependencies
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install serverless
+        run: npm install -g serverless
+        
+
+      - name: Install Plugin and Deploy
         run: |
-          python -m pip install --upgrade pip
-          pip install fastapi pytest uvicorn httpx
+          serverless plugin install --name serverless-dotenv-plugin
+          serverless plugin install --name serverless-python-requirements
+          serverless deploy --stage dev
 
-      - name: Run tests
-        run: pytest
+ 
 
-      
-  docker:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Docker login
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/fastapi:${{ github.sha }}
-
-
-    - name: Send notification to Teams
-      run: |
-        curl -X POST -H "Content-Type: application/json" \
-        -d "{
-            \"status\": \"✅ Build succeeded for **${{ github.repository }}**\",
-            \"repository\": { \"full_name\": \"${{ github.repository }}\" },
-            \"ref\": \"${{ github.ref }}\",
-            \"head_commit\": { \"message\": \"${{ github.event.head_commit.message }}\" },
-            \"pusher\": { \"name\": \"${{ github.actor }}\" }
-          }" \
-        "${{ secrets.TEAMS_WEBHOOK_URL }}"
+   
 
 
               
