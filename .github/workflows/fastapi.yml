@@ -1,6 +1,8 @@
 name: fastapi
 
-on: [push]
+on: 
+   repository_dispatch:
+    types: [start-example-workflow]
 
 jobs:
 
